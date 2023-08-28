@@ -1,0 +1,10 @@
+#EXUDYN parameter variation results file:models/SinglePendulum_A2C_r2_v2__ResultsVar.txt
+#results stored columnwise for every parameter and individual
+#Exudyn version = 1.7.0; Python3.9.12; Linux FLOAT64; Linux5.15.90.1-microsoft-standard-WSL2 V#1 SMP Fri Jan 27 02:56:13 UTC 2023; x86_64; x86_64(processing=multiprocessing.Pool, numberOfThreads=12)
+#stableBaselines3 version = 1.8.0; torch version = 2.0.1+cu117
+#
+#columns:
+#globalIndex,value,case,computationIndex
+#parameter ranges [format: (begin, end, numberOfVariations) or list, parameters separated with ";"]:
+#(1, 1, 1)
+0, 50, 1, 0

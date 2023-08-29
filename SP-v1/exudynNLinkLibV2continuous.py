@@ -357,6 +357,14 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
             elif self.rewardMode == 3: 
                 rewardCart = (1. - (1-self.rewardPositionFactor)*abs(angles[-1])/self.theta_threshold_radians 
                               - self.rewardPositionFactor*abs(px/self.x_threshold) )
+                
+        elif self.rewardMode == 4:
+            cart_pos = cartPosX
+            angle_1 = self.state[1]
+            angle_2 = self.state[2]
+            distance = abs(cart_pos) + abs(angle_1) + abs(angle_2)
+            rewardCart = max(0.0, 1.0 - distance)
+                
         else: 
             raise ValueError('rewardMode unknown! Choose from mode 0 to 3.')
 
@@ -414,7 +422,7 @@ def EvaluateEnv(model, testEnv, solutionFile, P):
 
     model.doLogging = True
     #print('reward log=',model.logger.name_to_value['train/reward'])            
-    return errorList, force
+    return errorList
 
 
 
@@ -836,7 +844,7 @@ def ParameterFunction(parameterSet):
             if (logs['rewardStep'] > P.rewardThreshold
                 and (nSteps-nStepsLastEvaluation) >= P.evaluationSteps):
                 nStepsLastEvaluation = nSteps
-                errorList, force = EvaluateEnv(model, testenv, None, P)
+                errorList = EvaluateEnv(model, testenv, None, P)
             # errorList = []    
             # if P.RLalgorithm == 'SAC' or P.RLalgorithm == 'TD3' or P.RLalgorithm == 'DDPG':
             #     if (logs['rewardStep'] > P.rewardThreshold and (nSteps-nStepsLastEvaluation) >= P.evaluationSteps):
@@ -874,7 +882,7 @@ def ParameterFunction(parameterSet):
                 
                 logs['errorList'] = errorList
                 logs['successfulTests'] = successfulTests
-                logs['force'] = force
+                #logs['force'] = force
                 
             resultsFile.write(str(logs)[1:-1]+'\n') #write dictionary without { }, making it machine readable
 

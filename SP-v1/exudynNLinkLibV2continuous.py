@@ -364,7 +364,42 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
             angle_2 = self.state[2]
             distance = abs(cart_pos) + abs(angle_1) + abs(angle_2)
             rewardCart = max(0.0, 1.0 - distance)
-                
+        
+        elif self.rewardMode == 5:
+            v_angle1 = self.state[4]
+            v_angle2 = self.state[5]
+            v_cart = self.state[3]
+            total_energy = (v_angle1 ** 2) + (v_angle2 ** 2) + (v_cart ** 2)
+            rewardCart = 1.0 / (1.0 + total_energy)
+        
+        elif self.rewardMode == 6:
+            angle_1 = self.state[1]
+            angle_2 = self.state[2]
+            angle_penalty = -0.1 * (abs(angle_1) + abs(angle_2))
+            rewardCart = 1.0 + angle_penalty
+        
+        elif self.rewardMode == 7:
+            control_penalty = -0.001 * action ** 2
+            rewardCart = 1.0 + control_penalty
+        
+        elif self.rewardMode == 8:
+            w1 = 0.5
+            w2 = 0.3
+            w3 = 0.2
+            cart_pos = cartPosX
+            angle_1 = self.state[1]
+            angle_2 = self.state[2]
+            v_angle1 = self.state[4]
+            v_angle2 = self.state[5]
+            v_cart = self.state[3]
+            distance = abs(cart_pos) + abs(angle_1) + abs(angle_2)
+            rewardCart_1 = max(0.0, 1.0 - distance)
+            total_energy = (v_angle1 ** 2) + (v_angle2 ** 2) + (v_cart ** 2)
+            rewardCart_2 = 1.0 / (1.0 + total_energy)
+            angle_penalty = -0.1 * (abs(angle_1) + abs(angle_2))
+            rewardCart_3 = 1.0 + angle_penalty
+            rewardCart = w1 * rewardCart_1 + w2 * rewardCart_2 + w3 * rewardCart_3
+        
         else: 
             raise ValueError('rewardMode unknown! Choose from mode 0 to 3.')
 
@@ -722,8 +757,6 @@ def ParameterFunction(parameterSet):
         learningEnv = SubprocVecEnv([InvertedNPendulumEnv for i in range(P.nThreadsTraining)])
         
         useVecEnv = True
-
-    force = learningEnv.mbs.GetSensorStoredData(learningEnv.sAction) # ???
     
     policy_kwargs = None
     if P.netarchLayerSize != None and P.netarchNumberOfLayers != None:
@@ -831,9 +864,29 @@ def ParameterFunction(parameterSet):
         nStepsLastEvaluation = 0
         while nSteps <= P.totalLearningSteps:
             model.learn(total_timesteps=P.episodeStepsMax, log_interval=logInterval, 
-                        callback=logCallback,reset_num_timesteps=False)
+                        callback=logCallback, reset_num_timesteps=False)
             logs = ComputeLogs(model,[])
             nSteps = logs['totalSteps']
+                        
+            action_taken = learningEnv.mbs.GetSensorStoredData(learningEnv.sAction)
+            #action_taken = action_taken[1::2]
+            #max_time = len(action_taken) * P.episodeStepsMax * P.stepUpdateTime
+            #time_vector = np.linspace(0, max_time, len(action_taken))
+            RL_algorithm = P.RLalgorithm
+            with open(f"force_data_{RL_algorithm}.txt", "a") as force_file:
+                for entry in action_taken:
+                    entry_time, force_value = entry[0], entry[1]
+                    force_file.write(f"{entry_time}\t{force_value}\n") 
+            
+            # RL_algorithm = P.RLalgorithm
+            # total_timesteps = P.totalLearningSteps
+            # action_values = action_taken[1::2, 1]
+            # time_vector = np.linspace(0, total_timesteps * 0.02, len(action_values)) 
+            # with open(f"force_data_{RL_algorithm}.txt", "w") as force_file:  # Overwrite the file to start fresh
+            #     #force_file.write("# Time (s)\tForce\n")
+            #     for time_entry, action_value in zip(time_vector, action_values):
+            #         force_file.write(f"{time_entry:.2f}\t{action_value}\n")
+            
             
             if nSteps >= batch_interval * batch_count:
                         batch_count += 1
@@ -1008,7 +1061,7 @@ def LoadAndVisualizeData(resultsFile, showFigure=True, exportFigure = True, show
             resultsFileNameList += [resultsFile+str(i)+'.txt']
     except:
         #no variations file, just single computation with 'Ref.txt' ending
-        resultsFileNameList = [resultsFile+'Ref.txt']
+        resultsFileNameList = [resultsFile] # +'Ref.txt'
         print('No valid variations file "'+resultsFileVar+'" found, trying to load single file with Ref number')
         pass
     

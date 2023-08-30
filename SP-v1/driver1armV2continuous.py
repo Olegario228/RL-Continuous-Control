@@ -55,7 +55,7 @@ if __name__ == '__main__': #include this to enable parallel processing
     episodeSteps = 1000    #we need to find the optimal hyperparameter in this case; small: faster reward increase, larger: more stable
 
     #outputName = 'plots/SinglePendulum_A2C_r2_v1'
-    outputName = 'models/DoublePendulum_PPO_r2_v1'
+    outputName = 'models/DoublePendulum_PPO_r8_checkup_'
     dirName = os.path.dirname(os.path.abspath(outputName))
     
     if not os.path.exists(dirName):
@@ -66,13 +66,13 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'evaluationSteps': evaluationSteps,
                              'episodeSteps': episodeSteps, 
                              'episodeStepsMax': int(episodeSteps*1.25), #if episodes do not finish
-                             'totalLearningSteps': int(300e3),  #max number of steps for total training
+                             'totalLearningSteps': int(30e3),  #max number of steps for total training
                              'logLevel': 3,  # 0=per step, 1=per rollout, 2=per episode, 3=per learn (higher is less logs!)
                              'lossThreshold': 1e-2,      # above that, no evaluation is performed
                              'rewardThreshold': 0.95,   # 0.95,    # above  that, no evaluation is performed (currently reward, not mean reward)
                              'meanSampleSize': 10,		#for computation of mean reward
                              'RLalgorithm': 'PPO',		#learning algorithm
-                             'rewardMode': 4,			 #1=sum angles + position cart, 2=sumAngles + position tip, 3=last link angle + position tip
+                             'rewardMode': 8,			 #1=sum angles + position cart, 2=sumAngles + position tip, 3=last link angle + position tip
                              'rewardPositionFactor': 0.5,
                              'stepUpdateTime': 0.02,     #step size for single step
                              'thresholdFactor': 0.5,     # ToDo

@@ -30,4 +30,4 @@
 'totalSteps': 30000, 'rewardStep': 0.8328741351183548, 'errorList': [], 'lossList': [0.0, -0.9494765099883079, 0.0, 12.073055894374848, 0.0, 0.0, 0.0], 'rewardMean': 0.7059794143058886, 'totalEpisodes': 2129, 'stepsPerEpisode': 57, 'rewardPerEpisode': 43.50021002659965
 'totalSteps': 31250, 'rewardStep': 0.7265993558341106, 'errorList': [], 'lossList': [0.0, -0.941344385445118, 0.0, 13.82300250530243, 0.0, 0.0, 0.0], 'rewardMean': 0.7131399584633911, 'totalEpisodes': 2169, 'stepsPerEpisode': 36, 'rewardPerEpisode': 26.26250200708553
 #less than 4 successful tests, storing failed model
-#maxSuccessfulTests=0, maxSuccessfulTestsAtStep=-1, timeSpent=20.42
+#maxSuccessfulTests=0, maxSuccessfulTestsAtStep=-1, timeSpent=20.62

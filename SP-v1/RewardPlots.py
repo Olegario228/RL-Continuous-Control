@@ -1,7 +1,7 @@
 import re
 import matplotlib.pyplot as plt
 
-file_path_0 = "models/SP_A2C_r2_v3_Results0.txt"
+file_path_0 = "models/DoublePendulum_PPO_r7_v0_Results0.txt"
 #file_path_1 = "C:/Users/z101841/Work/Machine Learning/Projects/RL application in Pendulum control/Continuous Control/v1/models/SinglePendulum_SAC_r2_Results1.txt"
 #file_path_2 = "C:/Users/z101841/Work/Machine Learning/Projects/RL application in Pendulum control/Continuous Control/v1/models/SinglePendulum_SAC_r2_Results2.txt"
 

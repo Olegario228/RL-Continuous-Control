@@ -1,2 +1,0 @@
-#parameter variation file for learning
-#varied parameters:

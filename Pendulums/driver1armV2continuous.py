@@ -88,7 +88,7 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'nThreadsTraining': 1,                       # 1 for single run; >1: vectorized envs, will also change behavior significantly
                              'resultsFile': outputName + 'Results',       # local results file
                              'verbose': True,
-                             'curicculumLearning': {'decayType': 'discrete', # lin, exp, or discrete 
+                             'curicculumLearning': {'decayType': 'discrete', # lin, quad, x^5, exp, or discrete 
                                                     'decaySteps': [0, 10000, 20000, 30000], # learning steps at which to change to the next controlValues
                                                     'controlValues': [[0,2,1],  # in decayStep i the i-th row of controlValues is written to the 
                                                                       [0,1,1], 

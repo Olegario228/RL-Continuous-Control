@@ -74,7 +74,7 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'rewardPositionFactor': 0.8, # % take a look on that (from 0.1)
                              'stepUpdateTime': 0.02,     #step size for single step
                              'thresholdFactor': 1.5,     # SP - 0.5, DP - 1.5; TP - 2.25
-                             'cartForce': 40,			# SP - 12; DP - 40; TP - 60 # vertical Force acting on the cart for the control; needs to be increased for bigger model # 12 for single
+                             'cartForce': 40*0,			# SP - 12; DP - 40; TP - 60 # vertical Force acting on the cart for the control; needs to be increased for bigger model # 12 for single
                              'forceFactor': 1,
                               # 'randomInitializationValue': 0.15,          # 
                               # 'randomInitializationFactorTest': 2/3,       # a factor to scale the random initialization for testing in relation to the training 
@@ -88,6 +88,13 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'nThreadsTraining': 1,                       # 1 for single run; >1: vectorized envs, will also change behavior significantly
                              'resultsFile': outputName + 'Results',       # local results file
                              'verbose': True,
+                             'curicculumLearning': {'decayType': 'discrete', # lin, exp, or discrete 
+                                                    'decaySteps': [0, 10000, 20000, 30000], # learning steps at which to change to the next controlValues
+                                                    'controlValues': [[0,2,1],  # in decayStep i the i-th row of controlValues is written to the 
+                                                                      [0,1,1], 
+                                                                      [0,0,1], 
+                                                                      [0,0,0]], 
+                                                    'dFactor': 0.05}, # in Segment i: dControl[i] = controlValues[i] * dFactor
                              }
 
     if False: #just evaluate and test one full learningSteps period (with graphics)
@@ -119,7 +126,7 @@ if __name__ == '__main__': #include this to enable parallel processing
                                              resultsFile=outputName+'ResultsVar.txt',
                                              numberOfThreads=12,       #this is the number of parallel threads that are used to perform computations; usually max. 2 x number of cores
                                              addComputationIndex=True, #False writes out messages in serial mode
-                                             useMultiProcessing=True , #turn this on to use numberOfThreads threads
+                                             useMultiProcessing=False , #turn this on to use numberOfThreads threads
                                              showProgress=True,
                                              )
         AppendVersionToResultFile(outputName+'_ResultsVar.txt')

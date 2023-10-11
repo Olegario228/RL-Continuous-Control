@@ -63,6 +63,7 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
                  numActions = 2,   #if set to 3 the "zero action" is included
                  forceFactor = 1,
                  actionThreshold = 1, 
+                 curicculumLearning = {},
                  **kwargs):
 
         #+++++++++++++++++++++++++++++++++++++++++++++
@@ -81,6 +82,7 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
         self.numActions = numActions
         self.forceFactor = forceFactor
         self.actionThreshold = actionThreshold
+        self.curicculumLearning = curicculumLearning
         
         self.rewardStep = 0 #make it accessible from outside
         self.rewardPositionFactor = rewardPositionFactor
@@ -132,7 +134,7 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
         inertiaLink = RigidBodyInertia(self.masscart, np.diag([0.1*self.masscart,0.1*self.masscart,0.1*self.masscart]), [0,0,0])
         link = RobotLink(inertiaLink.Mass(), inertiaLink.COM(), inertiaLink.InertiaCOM(), 
                          jointType='Px', preHT=HT0(), 
-                         # PDcontrol=(pControl, dControl),
+                          # PDcontrol=(pControl, dControl),
                          visualization=VRobotLink(linkColor=color4lawngreen))
         newRobot.AddLink(link)
     
@@ -184,7 +186,7 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
                                                         frictionProportionalZone=5e-3, #rad/s
                                                         # nodeNumber=nGeneric,
                                                         # stickingStiffness = 1e5, stickingDamping=5e2, #bristle stiffness and damping
-                                                        #fStaticFrictionOffset = 0.25*self.dynamicFrictionTorque,
+                                                        #fStaticFrictionOff  = 0.25*self.dynamicFrictionTorque,
                                                         ))
         
         
@@ -214,6 +216,11 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
         
         #must return state size
         stateSize = (self.nTotalLinks)*2 #the number of states (position/velocity that are used by learning algorithm)
+        
+        
+        if bool(self.curicculumLearning):  
+            self.SetCuricculumLearning(0)
+            
         return stateSize
 
     #**classFunction: OVERRIDE this function to set up self.action_space and self.observation_space
@@ -279,6 +286,81 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
         # print('initial values=',initialValues)
         return [initialValues,initialValues_t]
         
+    # 
+    def ChangeControl(self, pControl, dFactor): 
+        self.mbs.SetObjectParameter(self.oKT, 'jointPControlVector', pControl)
+        self.mbs.SetObjectParameter(self.oKT, 'jointDControlVector', np.array(pControl) * dFactor)
+        self.mbs.SetObjectParameter(self.oKT, 'jointPositionOffsetVector', [0]*len(pControl))
+        self.mbs.SetObjectParameter(self.oKT, 'jointVelocityOffsetVector', [0]*len(pControl))
+        print('changed control to ', pControl)
+        return        
+
+
+    # utility function for curicculum learning; using pd-control in the joints to simplify the stabilization task
+    def SetCuricculumLearning(self, nSteps):
+        dFactor = self.curicculumLearning['dFactor']
+        decayType = self.curicculumLearning['decayType']
+        decaySteps = self.curicculumLearning['decaySteps']
+        decayControl = self.curicculumLearning['controlValues']
+        if not('nStepsLastChange' in self.curicculumLearning):
+                self.curicculumLearning['nStepsLastChange'] = 0
+                self.curicculumLearning['iDecay'] = 0
+        nStepsLastChange = self.curicculumLearning['nStepsLastChange']
+        iDecay = self.curicculumLearning['iDecay']
+        if nSteps >= self.curicculumLearning['decaySteps'][-1]:
+            self.ChangeControl(decayControl[-1], dFactor)
+            return decayControl[-1]
+        
+        if nSteps > decaySteps[iDecay+1]:  # change decay section
+           iDecay += 1 # next decay step
+           self.curicculumLearning['iDecay'] += 1
+           print('step = ', nSteps, 'next Segment: ', iDecay)
+           if decayType == 'discrete': # 
+               # changeControl(decayControl[iDecay], dFactor)
+               self.curicculumLearning['nStepsLastChange'] = nSteps
+               # print('t = ', nSteps, ', segment = ', iDecay)
+               self.ChangeControl(decayControl[iDecay], dFactor)
+               return decayControl[iDecay]
+        if decayType != 'discrete': 
+            # x normalizes the time of the current segment from 0 to 1. 
+            x = (nSteps - decaySteps[iDecay]) * (1)/(decaySteps[iDecay+1] - decaySteps[0+iDecay])
+            
+            if decayType == 'lin' or decayType == 'linear':
+                f = x
+            elif decayType == 'exp': # sigmoid 
+                f = 1 -  2 / (1+np.exp(x*10)) # goes from 1 to 0 exponentially ...
+                if f < 1e-4: 
+                    f = 0
+                    
+            elif decayType == 'quad' or decayType == 'quadratic': 
+                f = x**2
+            elif decayType == 'x5': 
+                f = x ** 5
+            
+            else: 
+                raise ValueError('decayType ', decayType, ' unknown.')
+
+            controlNew = np.array(decayControl[iDecay]) * (1-f) + np.array(decayControl[iDecay+1]) * f
+            self.curicculumLearning['nStepsLastChange'] = nSteps
+            self.ChangeControl(controlNew, dFactor)
+            # print('t = ', nSteps, ', segment = ', iDecay, 'f= ', f)
+            return controlNew
+        else: 
+            self.ChangeControl(decayControl[iDecay], dFactor)
+            # print('t = ', nSteps, ', segment = ', iDecay, ' value= ', decayControl[iDecay])
+            return decayControl[iDecay]
+
+            
+        # except: 
+            # print('ERROR! ')
+            # raise(ValueError)
+        # pControl = [0]  + [0] * self.nArms
+        # dControl = np.array(pControl)*0.05
+        # self.mbs.GetObject(self.oKT)['jointPControlVector']
+        # self.mbs.GetObject(self.oKT)['jointPControlVector']
+        
+        # print('Changed system control parameters!')
+        # return
 
 
     #**classFunction: openAI gym interface function which is called to compute one step
@@ -460,6 +542,7 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
         return np.array(self.state, dtype=np.float32), self.rewardStep, done, {}
 
 
+    
 
 #function to evaluate model after some training    
 def EvaluateEnv(model, testEnv, solutionFile, P):
@@ -574,6 +657,8 @@ def ParameterFunction(parameterSet):
     
     P.nArms = 1                 #single pendulum nArms=1, double pendulum nArms=2, etc.
     P.case = 0
+    P.curicculumLearning = {}
+    
     # #now update parameters with parameterSet (will work with any parameters in structure P)
     for key,value in parameterSet.items():
         setattr(P,key,value)
@@ -589,6 +674,12 @@ def ParameterFunction(parameterSet):
             setattr(P,key,value)
             # print('get functionData:', key, '=', value) #for debug
 
+    if bool(P.curicculumLearning): # dict is not empty
+        # if P.curicculumLearning['decaySteps'][-1] < P.totalLearningSteps: 
+            # raise ValueError('The last value of decaySteps of curicculumLearning must not be smaller than totalLearningSteps')
+        if len(P.curicculumLearning['decaySteps']) != len(P.curicculumLearning['controlValues']): 
+            raise ValueError('number of control values must be equal to the decay steps.')
+            
     P.episodeSteps = int(P.episodeSteps)
     P.episodeStepsMax = int(P.episodeStepsMax)
     P.evaluationSteps = int(P.evaluationSteps)
@@ -772,6 +863,7 @@ def ParameterFunction(parameterSet):
                                  cartForce=P.cartForce,
                                  rewardMode = P.rewardMode,
                                  numActions=P.numActions, 
+                                 curicculumLearning = P.curicculumLearning
                                  ) 
     learningEnv.randomInitializationValue = P.randomInitializationValue #standard is 0.05; this is the size of disturbance we add at beginning of learning
     
@@ -784,6 +876,7 @@ def ParameterFunction(parameterSet):
                                    cartForce=P.cartForce,
                                    rewardMode = P.rewardMode,
                                    numActions=P.numActions, 
+                                   curicculumLearning = P.curicculumLearning,
                                    ) 
     #TODO: check if this is too high for learning/testing:
     testenv.randomInitializationValue = P.randomInitializationValue* P.randomInitializationFactorTest
@@ -915,11 +1008,16 @@ def ParameterFunction(parameterSet):
             if nSteps >= batch_interval * batch_count:
                         batch_count += 1
                         model.save(storeModelName + '_' + P.RLalgorithm + '_' + str(nSteps))
-            
+                        
+            if bool(learningEnv.curicculumLearning): # check if model is empty: 
+                controlValue = testenv.SetCuricculumLearning(nSteps)
+                learningEnv.SetCuricculumLearning(nSteps)
+            else: 
+                controlValue = [0] # no control
             if P.verbose:
                 print('n='+str(nSteps)+varStr+', lo=', logs['lossList'][0], ', re=', logs['rewardStep'] )
-            if (logs['rewardStep'] > P.rewardThreshold
-                and (nSteps-nStepsLastEvaluation) >= P.evaluationSteps):
+            if (np.linalg.norm(controlValue) < 1e-10) and (logs['rewardStep'] > P.rewardThreshold and
+                     (nSteps-nStepsLastEvaluation) >= P.evaluationSteps):
                 nStepsLastEvaluation = nSteps
                 errorList = EvaluateEnv(model, testenv, None, P)
             # errorList = []    
@@ -931,7 +1029,7 @@ def ParameterFunction(parameterSet):
             #     if (logs['lossList'][0] < P.lossThreshold and logs['rewardStep'] > P.rewardThreshold and (nSteps-nStepsLastEvaluation) >= P.evaluationSteps):
             #         nStepsLastEvaluation = nSteps
             #         errorList = EvaluateEnv(model, testenv, None, P)
-            
+                
                 successfulTests = 0
                 sumError = 0
                 for er in errorList:

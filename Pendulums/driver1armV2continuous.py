@@ -41,7 +41,7 @@ from exudynNLinkLibV2continuous import InvertedNPendulumEnv, EvaluateEnv, Parame
 
 #the following totally overrides specific settings for single, parallelized runs (use with care!):
 #these variables must be treated differently in __init__ of InvertedNPendulumEnv
-nArms = 2 #number of inverted links ...
+nArms = 3 #number of inverted links ...
 #set the following line for vectorized environments:
 #InvertedNPendulumEnv.nArms = nArms #nArms cannot be passed to environment for multithreaded learning (substeps=-1), must be overwritten here!
 
@@ -52,8 +52,8 @@ if __name__ == '__main__': #include this to enable parallel processing
     import time
 
     evaluationSteps = 10000
-    episodeSteps = 1229    # SP - 1024; DP - 1229; TP = 1639
-    outputName = 'models/DP_PPO_r2_v1_'
+    episodeSteps = 1639    # SP - 1024; DP - 1229; TP = 1639
+    outputName = 'models/TP/A2C/TP_A2C_r2_v4_'
     dirName = os.path.dirname(os.path.abspath(outputName))
     
     if not os.path.exists(dirName):
@@ -64,21 +64,21 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'evaluationSteps': evaluationSteps,
                              'episodeSteps': episodeSteps, 
                              'episodeStepsMax': int(episodeSteps*1.25), #if episodes do not finish
-                             'totalLearningSteps': int(0.5e6),  #max number of steps for total training
+                             'totalLearningSteps': int(1e6),  #max number of steps for total training
                              'logLevel': 3,  # 0=per step, 1=per rollout, 2=per episode, 3=per learn (higher is less logs!)
                              'lossThreshold': 1e-2,      # above that, no evaluation is performed
                              'rewardThreshold': 0.95,   # 0.95,    # above  that, no evaluation is performed (currently reward, not mean reward)
                              'meanSampleSize': 10,		#for computation of mean reward
-                             'RLalgorithm': 'PPO',		#learning algorithm
+                             'RLalgorithm': 'A2C',		#learning algorithm
                              'rewardMode': 2,			 #1=sum angles + position cart, 2=sumAngles + position tip, 3=last link angle + position tip
-                             'rewardPositionFactor': 0.8, # % take a look on that (from 0.1)
+                             'rewardPositionFactor': 0.99, # % take a look on that (from 0.1)
                              'stepUpdateTime': 0.02,     #step size for single step
-                             'thresholdFactor': 1.5,     # SP - 0.5, DP - 1.5; TP - 2.25
-                             'cartForce': 40*0,			# SP - 12; DP - 40; TP - 60 # vertical Force acting on the cart for the control; needs to be increased for bigger model # 12 for single
+                             'thresholdFactor': 2.25,     # SP - 0.5, DP - 1.5; TP - 2.25
+                             'cartForce': 55,			# SP - 12; DP - 40; TP - 60 # vertical Force acting on the cart for the control; needs to be increased for bigger model # 12 for single
                              'forceFactor': 1,
                               # 'randomInitializationValue': 0.15,          # 
                               # 'randomInitializationFactorTest': 2/3,       # a factor to scale the random initialization for testing in relation to the training 
-                             'numberOfTests': 50,                # SP/DP - 50; TP - 100        # number of test evaluations; this number may be high to get high confidence, but may lead to larger evaluation time
+                             'numberOfTests': 100,                # SP/DP - 50; TP - 100        # number of test evaluations; this number may be high to get high confidence, but may lead to larger evaluation time
                              'relativeFriction': 0*0.02, 
                              'storeBestModel': outputName + 'Model', 	  # add name here to store best model (model with the hightest number of successful tests)
                              'netarchLayerSize': 64,                      # default: 64, should be probably exp of 2; larger=slower
@@ -88,13 +88,13 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'nThreadsTraining': 1,                       # 1 for single run; >1: vectorized envs, will also change behavior significantly
                              'resultsFile': outputName + 'Results',       # local results file
                              'verbose': True,
-                             'curicculumLearning': {'decayType': 'discrete', # lin, quad, x^5, exp, or discrete 
-                                                    'decaySteps': [0, 10000, 20000, 30000], # learning steps at which to change to the next controlValues
-                                                    'controlValues': [[0,2,1],  # in decayStep i the i-th row of controlValues is written to the 
-                                                                      [0,1,1], 
-                                                                      [0,0,1], 
-                                                                      [0,0,0]], 
-                                                    'dFactor': 0.05}, # in Segment i: dControl[i] = controlValues[i] * dFactor
+                            #  'curicculumLearning': {'decayType': 'discrete', # lin, quad, x^5, exp, or discrete 
+                            #                         'decaySteps': [0, 10000, 20000, 30000], # learning steps at which to change to the next controlValues
+                            #                         'controlValues': [[0,2,1],  # in decayStep i the i-th row of controlValues is written to the 
+                            #                                           [0,1,1], 
+                            #                                           [0,0,1], 
+                            #                                           [0,0,0]], 
+                            #                         'dFactor': 0.05}, # in Segment i: dControl[i] = controlValues[i] * dFactor
                              }
 
     if False: #just evaluate and test one full learningSteps period (with graphics)
@@ -105,7 +105,7 @@ if __name__ == '__main__': #include this to enable parallel processing
         nCases = 3 # repeat for statistics, parameters are unchanged
         [pDict, values] = ParameterVariation(parameterFunction=ParameterFunction,
                                              parameters = { 
-                                                            # 'rewardPositionFactor':(0.5,0.9,3),
+                                                           #'rewardPositionFactor': (0.9, 0.75, 0.65),
                                                            #'thresholdFactor':(0.5,1.,3), #standard is 0.75
                                                            #'RLalgorithm':(0,2,3), #[0,1,2] == [A2C, PPO, DQN]
                                                            #'learningRateFactor':(0.5,2,5), #factor on original learning rate
@@ -113,12 +113,12 @@ if __name__ == '__main__': #include this to enable parallel processing
                                                            #'testMassCartFact':(0.8,1.2,3),
                                                            #'lengthFact':(0.5,2,7),
                                                            #'relativeFriction':(0.,0.01,2),
-                                                           # 'cartForce':(8,12,3),
+                                                           #'cartForce': (60, 55, 50),
                                                            # 'numActions': (2,3,2), 
                                                            # 'randomInitializationFactorTest': (0.5, 1, 3), 
                                                            # 'randomInitializationValue': (0.08, 0.1, 2), 
                                                            # 'rewardMode': (0,3,4), # better give the values as a tuple, not a list; otherwise the postprocessing makes problems
-                                                            'case':(1,nCases,nCases), #check statistics, not varying parameters
+                                                           'case': (1, nCases, nCases), #check statistics, not varying parameters
                                                            },
                                              parameterFunctionData = parameterFunctionData,
                                              debugMode=False,         #more output
@@ -126,7 +126,7 @@ if __name__ == '__main__': #include this to enable parallel processing
                                              resultsFile=outputName+'ResultsVar.txt',
                                              numberOfThreads=12,       #this is the number of parallel threads that are used to perform computations; usually max. 2 x number of cores
                                              addComputationIndex=True, #False writes out messages in serial mode
-                                             useMultiProcessing=False , #turn this on to use numberOfThreads threads
+                                             useMultiProcessing=True, #turn this on to use numberOfThreads threads
                                              showProgress=True,
                                              )
         AppendVersionToResultFile(outputName+'_ResultsVar.txt')

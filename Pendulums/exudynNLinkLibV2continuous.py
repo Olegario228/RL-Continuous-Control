@@ -212,7 +212,7 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
         # Angle at which to fail the episode
         # these parameters are used in subfunctions
         self.theta_threshold_radians = self.thresholdFactor* 12 * (2 * pi / 360)
-        self.x_threshold = self.thresholdFactor*2.4
+        self.x_threshold = self.thresholdFactor * 2.4
         
         #must return state size
         stateSize = (self.nTotalLinks)*2 #the number of states (position/velocity that are used by learning algorithm)
@@ -409,7 +409,7 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
             
             # rewardCart = -(theta**2 + 0.1 * theta_dt**2 + 0.001 * torque**2)
         elif self.rewardMode == 1: # rewardmode 
-            rewardCart = 1 - self.rewardPositionFactor*abs(cartPosX)/self.x_threshold - (1-self.rewardPositionFactor)*sumAngles/self.theta_threshold_radians
+            rewardCart = 1 - self.rewardPositionFactor * abs(cartPosX) / self.x_threshold - (1 - self.rewardPositionFactor) * sumAngles / self.theta_threshold_radians
 
         elif self.rewardMode == 2 or self.rewardMode == 3:
             angles = self.state[1:self.nTotalLinks]
@@ -424,21 +424,10 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
                 angleLast += angles[i]
 
             if self.rewardMode == 2:
-                if 0: # depreciated, bad performance 
-                    rewardCart = 1. - (1.-py/(L*self.nArms) )/self.theta_threshold_radians - abs(px/self.x_threshold) 
-                else: 
-                    # Peter: I was testing different weighting for the errors produced by the angles; it is not working better (yet)
-                    # now it is the syame as rewardMode1 but with px instead of cartPosX
-                    rewardCart = 1 - (1-self.rewardPositionFactor)*sumAngles/self.theta_threshold_radians \
-                                      - self.rewardPositionFactor*abs(px)/self.x_threshold
-                    # rewardCart = 1. - (1.-self.rewardPositionFactor) * (1-py/(L*self.nArms))self.theta_threshold_radians \
-                    #                  -     self.rewardPositionFactor *  abs(px/self.x_threshold)
-                    # rewardCart = 1 - 5*np.sqrt((py-L*self.nArms)**2 + px**2)/self.x_threshold # deviation of the tip 
-            
+                rewardCart = 1 - (1 - self.rewardPositionFactor) * sumAngles / self.theta_threshold_radians - self.rewardPositionFactor * abs(px) / self.x_threshold          
             
             elif self.rewardMode == 3: 
-                rewardCart = (1. - (1-self.rewardPositionFactor)*abs(angles[-1])/self.theta_threshold_radians 
-                              - self.rewardPositionFactor*abs(px/self.x_threshold) )
+                rewardCart = (1. - (1 - self.rewardPositionFactor) * abs(angles[-1]) / self.theta_threshold_radians - self.rewardPositionFactor * abs(px / self.x_threshold))
                 
         elif self.rewardMode == 4:
             cart_pos = cartPosX

@@ -1031,7 +1031,7 @@ def ParameterFunction(parameterSet):
                     maxSuccessfulTestsSteps = nSteps
 
                     if (successfulTests >= min(4,P.numberOfTests) and P.storeBestModel != '' and sumError < P.bestTestError):
-                        model.save(storeModelName + '_' + P.RLalgorithm + '_' + str(nSteps))
+                        model.save(storeModelName + '_' + P.RLalgorithm + '_' + str(nSteps) + '_' + str(successfulTests) + '_tests')
                         if P.verbose: 
                             print('  saving model {} \t at step {}, err = {}'.format(storeModelName + '_' + P.RLalgorithm, nSteps, sumError))
                     elif (successfulTests >= min(30,P.numberOfTests) and P.storeBestModel != ''):

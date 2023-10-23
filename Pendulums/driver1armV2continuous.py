@@ -41,7 +41,7 @@ from exudynNLinkLibV2continuous import InvertedNPendulumEnv, EvaluateEnv, Parame
 
 #the following totally overrides specific settings for single, parallelized runs (use with care!):
 #these variables must be treated differently in __init__ of InvertedNPendulumEnv
-nArms = 3 #number of inverted links ...
+nArms = 2 #number of inverted links ...
 #set the following line for vectorized environments:
 #InvertedNPendulumEnv.nArms = nArms #nArms cannot be passed to environment for multithreaded learning (substeps=-1), must be overwritten here!
 
@@ -51,9 +51,9 @@ nArms = 3 #number of inverted links ...
 if __name__ == '__main__': #include this to enable parallel processing
     import time
 
-    evaluationSteps = 10000
-    episodeSteps = 1639    # SP - 1024; DP - 1229; TP = 1639
-    outputName = 'models/TP/A2C/TP_A2C_r2_v4_'
+    evaluationSteps = 5000
+    episodeSteps = 1229    # SP - 1024; DP - 1229; TP = 1639
+    outputName = 'models/DP/PPO/DP_PPO_r0'
     dirName = os.path.dirname(os.path.abspath(outputName))
     
     if not os.path.exists(dirName):
@@ -64,17 +64,17 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'evaluationSteps': evaluationSteps,
                              'episodeSteps': episodeSteps, 
                              'episodeStepsMax': int(episodeSteps*1.25), #if episodes do not finish
-                             'totalLearningSteps': int(1e6),  #max number of steps for total training
+                             'totalLearningSteps': int(0.3e6),  #max number of steps for total training
                              'logLevel': 3,  # 0=per step, 1=per rollout, 2=per episode, 3=per learn (higher is less logs!)
                              'lossThreshold': 1e-2,      # above that, no evaluation is performed
                              'rewardThreshold': 0.95,   # 0.95,    # above  that, no evaluation is performed (currently reward, not mean reward)
                              'meanSampleSize': 10,		#for computation of mean reward
-                             'RLalgorithm': 'A2C',		#learning algorithm
+                             'RLalgorithm': 'PPO',		#learning algorithm
                              'rewardMode': 2,			 #1=sum angles + position cart, 2=sumAngles + position tip, 3=last link angle + position tip
-                             'rewardPositionFactor': 0.99, # % take a look on that (from 0.1)
+                             'rewardPositionFactor': 0.7, # % take a look on that (from 0.1)
                              'stepUpdateTime': 0.02,     #step size for single step
-                             'thresholdFactor': 2.25,     # SP - 0.5, DP - 1.5; TP - 2.25
-                             'cartForce': 55,			# SP - 12; DP - 40; TP - 60 # vertical Force acting on the cart for the control; needs to be increased for bigger model # 12 for single
+                             'thresholdFactor': 1.5,     # SP - 0.5, DP - 1.5; TP - 2.25
+                             'cartForce': 40,			# SP - 12; DP - 40; TP - 60 # vertical Force acting on the cart for the control; needs to be increased for bigger model # 12 for single
                              'forceFactor': 1,
                               # 'randomInitializationValue': 0.15,          # 
                               # 'randomInitializationFactorTest': 2/3,       # a factor to scale the random initialization for testing in relation to the training 
@@ -88,8 +88,8 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'nThreadsTraining': 1,                       # 1 for single run; >1: vectorized envs, will also change behavior significantly
                              'resultsFile': outputName + 'Results',       # local results file
                              'verbose': True,
-                            #  'curicculumLearning': {'decayType': 'discrete', # lin, quad, x^5, exp, or discrete 
-                            #                         'decaySteps': [0, 10000, 20000, 30000], # learning steps at which to change to the next controlValues
+                            #  'curicculumLearning': {'decayType': 'quad', # lin, quad, x^5, exp, or discrete 
+                            #                         'decaySteps': [0, 30000, 60000, 90000], # learning steps at which to change to the next controlValues
                             #                         'controlValues': [[0,2,1],  # in decayStep i the i-th row of controlValues is written to the 
                             #                                           [0,1,1], 
                             #                                           [0,0,1], 

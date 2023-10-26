@@ -331,9 +331,10 @@ class InvertedNPendulumEnv(OpenAIGymInterfaceEnv):
                 f = 1 -  2 / (1+np.exp(x*10)) # goes from 1 to 0 exponentially ...
                 if f < 1e-4: 
                     f = 0
-                    
+            elif decayType == 'sqrt':
+                f = x ** 0.5        
             elif decayType == 'quad' or decayType == 'quadratic': 
-                f = x**2
+                f = x ** 2
             elif decayType == 'x5': 
                 f = x ** 5
             

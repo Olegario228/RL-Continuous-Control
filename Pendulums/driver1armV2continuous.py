@@ -41,7 +41,7 @@ from exudynNLinkLibV2continuous import InvertedNPendulumEnv, EvaluateEnv, Parame
 
 #the following totally overrides specific settings for single, parallelized runs (use with care!):
 #these variables must be treated differently in __init__ of InvertedNPendulumEnv
-nArms = 2 #number of inverted links ...
+nArms = 3 #number of inverted links ...
 #set the following line for vectorized environments:
 #InvertedNPendulumEnv.nArms = nArms #nArms cannot be passed to environment for multithreaded learning (substeps=-1), must be overwritten here!
 
@@ -52,8 +52,8 @@ if __name__ == '__main__': #include this to enable parallel processing
     import time
 
     evaluationSteps = 5000
-    episodeSteps = 1229    # SP - 1024; DP - 1229; TP = 1639
-    outputName = 'models/DP/PPO/DP_PPO_r0'
+    episodeSteps = 1639    # SP - 1024; DP - 1229; TP = 1639
+    outputName = 'models\Curriculum-Learning\TP\PPO_sqrt_v1_rpf09_'
     dirName = os.path.dirname(os.path.abspath(outputName))
     
     if not os.path.exists(dirName):
@@ -64,17 +64,17 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'evaluationSteps': evaluationSteps,
                              'episodeSteps': episodeSteps, 
                              'episodeStepsMax': int(episodeSteps*1.25), #if episodes do not finish
-                             'totalLearningSteps': int(0.3e6),  #max number of steps for total training
+                             'totalLearningSteps': int(0.5e6),  #max number of steps for total training
                              'logLevel': 3,  # 0=per step, 1=per rollout, 2=per episode, 3=per learn (higher is less logs!)
                              'lossThreshold': 1e-2,      # above that, no evaluation is performed
                              'rewardThreshold': 0.95,   # 0.95,    # above  that, no evaluation is performed (currently reward, not mean reward)
                              'meanSampleSize': 10,		#for computation of mean reward
                              'RLalgorithm': 'PPO',		#learning algorithm
                              'rewardMode': 2,			 #1=sum angles + position cart, 2=sumAngles + position tip, 3=last link angle + position tip
-                             'rewardPositionFactor': 0.7, # % take a look on that (from 0.1)
+                             'rewardPositionFactor': 0.9, # % take a look on that (from 0.1)
                              'stepUpdateTime': 0.02,     #step size for single step
-                             'thresholdFactor': 1.5,     # SP - 0.5, DP - 1.5; TP - 2.25
-                             'cartForce': 40,			# SP - 12; DP - 40; TP - 60 # vertical Force acting on the cart for the control; needs to be increased for bigger model # 12 for single
+                             'thresholdFactor': 2.25,     # SP - 0.5, DP - 1.5; TP - 2.25
+                             'cartForce': 60,			# SP - 12; DP - 40; TP - 60 # vertical Force acting on the cart for the control; needs to be increased for bigger model # 12 for single
                              'forceFactor': 1,
                               # 'randomInitializationValue': 0.15,          # 
                               # 'randomInitializationFactorTest': 2/3,       # a factor to scale the random initialization for testing in relation to the training 
@@ -88,13 +88,15 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'nThreadsTraining': 1,                       # 1 for single run; >1: vectorized envs, will also change behavior significantly
                              'resultsFile': outputName + 'Results',       # local results file
                              'verbose': True,
-                            #  'curicculumLearning': {'decayType': 'quad', # lin, quad, x^5, exp, or discrete 
-                            #                         'decaySteps': [0, 30000, 60000, 90000], # learning steps at which to change to the next controlValues
-                            #                         'controlValues': [[0,2,1],  # in decayStep i the i-th row of controlValues is written to the 
-                            #                                           [0,1,1], 
-                            #                                           [0,0,1], 
-                            #                                           [0,0,0]], 
-                            #                         'dFactor': 0.05}, # in Segment i: dControl[i] = controlValues[i] * dFactor
+                             'curicculumLearning': {'decayType': 'sqrt', # lin, quad, x^5, exp, discrete, sqrt 
+                                                    'decaySteps': [0, 30000, 70000, 110000], # learning steps at which to change to the next controlValues
+                                                    'controlValues': [
+                                                                      [0,10,6,3],  # in decayStep i the i-th row of controlValues is written to the 
+                                                                      [0,0,5,3], 
+                                                                      [0,0,0,2], 
+                                                                      [0,0,0,0],
+                                                                     ], 
+                                                    'dFactor': 0.05}, # in Segment i: dControl[i] = controlValues[i] * dFactor
                              }
 
     if False: #just evaluate and test one full learningSteps period (with graphics)
@@ -105,7 +107,7 @@ if __name__ == '__main__': #include this to enable parallel processing
         nCases = 3 # repeat for statistics, parameters are unchanged
         [pDict, values] = ParameterVariation(parameterFunction=ParameterFunction,
                                              parameters = { 
-                                                           #'rewardPositionFactor': (0.9, 0.75, 0.65),
+                                                           #'rewardPositionFactor': [0.9, 0.8, 0.7],
                                                            #'thresholdFactor':(0.5,1.,3), #standard is 0.75
                                                            #'RLalgorithm':(0,2,3), #[0,1,2] == [A2C, PPO, DQN]
                                                            #'learningRateFactor':(0.5,2,5), #factor on original learning rate
@@ -113,7 +115,7 @@ if __name__ == '__main__': #include this to enable parallel processing
                                                            #'testMassCartFact':(0.8,1.2,3),
                                                            #'lengthFact':(0.5,2,7),
                                                            #'relativeFriction':(0.,0.01,2),
-                                                           #'cartForce': (60, 55, 50),
+                                                           #'cartForce': [50, 55, 60],
                                                            # 'numActions': (2,3,2), 
                                                            # 'randomInitializationFactorTest': (0.5, 1, 3), 
                                                            # 'randomInitializationValue': (0.08, 0.1, 2), 

@@ -1,5 +1,5 @@
 import os
-import moviepy.video.io.ImageSequenceClip
+#import moviepy.video.io.ImageSequenceClip
 import matplotlib.pyplot as plt
 
 import exudyn as exu
@@ -13,9 +13,16 @@ localEnv = InvertedNPendulumEnv(nArms = 3,
                                 massArmFact = 1, massCartFact = 1, lengthFact = 1,
                                 relativeFriction = 0,
                                 stepUpdateTime = 0.02,
-                                cartForce = 60,
+                                cartForce = 0,
                                 actionThreshold = 1,
                                 forceFactor = 1,
+                                curicculumLearning = {'decayType': 'quad', # lin, quad, x^5, exp, or discrete 
+                                                    'decaySteps': [0, 30000, 60000, 150000], # learning steps at which to change to the next controlValues
+                                                    'controlValues': [[10,10,10,10],  # in decayStep i the i-th row of controlValues is written to the 
+                                                                      [0,2,1,0.5], 
+                                                                      [0,0,1,0.5], 
+                                                                      [0,0,0,0]], 
+                                                    'dFactor': 0.05},
                                 rewardMode = 2)
 
 localEnv.randomInitializationValue = 0.1

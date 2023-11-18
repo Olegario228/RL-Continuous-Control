@@ -1,9 +1,9 @@
 import re
 import matplotlib.pyplot as plt
 
-file_path_0 = "models\TP_PPO_r2_n64_v2_Results0.txt"
-file_path_1 = "models\TP_PPO_r2_n64_v2_Results1.txt"
-file_path_2 = "models\TP_PPO_r2_n64_v2_Results2.txt"
+file_path_0 = "models\Curriculum-Learning\TP\PPO_exp_v0_rpf09_Results0.txt"
+file_path_1 = "models\Curriculum-Learning\TP\PPO_exp_v0_rpf09_Results1.txt"
+file_path_2 = "models\Curriculum-Learning\TP\PPO_exp_v0_rpf09_Results2.txt"
 
 total_steps_0 = []
 reward_per_episode_0 = []

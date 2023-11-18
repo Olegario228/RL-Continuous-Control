@@ -1,0 +1,13 @@
+#EXUDYN parameter variation results file:models\Curriculum-Learning\SP\PPO_exp_v8_ResultsVar.txt
+#results stored columnwise for every parameter and individual
+#Exudyn version = 1.6.119.dev1; Python3.8.13; Windows AVX2 FLOAT64; Windows10 V10.0.19045; AMD64; AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD(processing=multiprocessing.Pool, numberOfThreads=12)
+#
+#columns:
+#globalIndex,value,case,computationIndex
+#parameter ranges [format: (begin, end, numberOfVariations) or list, parameters separated with ";"]:
+#(1, 5, 5)
+0, 50, 1, 0
+1, 50, 2, 1
+2, 50, 3, 2
+3, 50, 4, 3
+4, 50, 5, 4

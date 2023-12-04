@@ -1073,7 +1073,7 @@ def ParameterFunction(parameterSet):
     if P.verbose: 
         print('*** learning time total =',ts+time.time(),'***')
 
-    return maxSuccessfulTests
+    return maxSuccessfulTests, nSteps
 
 
 #%% 

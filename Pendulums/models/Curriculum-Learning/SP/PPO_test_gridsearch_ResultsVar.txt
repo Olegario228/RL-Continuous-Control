@@ -1,4 +1,4 @@
-#EXUDYN parameter variation results file:models\Curriculum-Learning\SP\PPO_base_NoCurriculum_ResultsVar.txt
+#EXUDYN parameter variation results file:models\Curriculum-Learning\SP\PPO_test_gridsearch_ResultsVar.txt
 #results stored columnwise for every parameter and individual
 #Exudyn version = 1.7.0; Python3.9.11; Windows AVX2 FLOAT64; Windows10 V10.0.19045; AMD64; Intel64 Family 6 Model 186 Stepping 2, GenuineIntel(processing=multiprocessing.Pool, numberOfThreads=20)
 #
@@ -7,7 +7,7 @@
 #parameter ranges [format: (begin, end, numberOfVariations) or list, parameters separated with ";"]:
 #(1, 5, 5)
 0, (50, 26880), 1, 0
-1, (47, 35840), 2, 1
-2, (50, 20480), 3, 2
-3, (50, 32000), 4, 3
-4, (50, 23040), 5, 4
+1, (50, 23040), 2, 1
+2, (50, 19200), 3, 2
+3, (50, 25600), 4, 3
+4, (50, 29440), 5, 4

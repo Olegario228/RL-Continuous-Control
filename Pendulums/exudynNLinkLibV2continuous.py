@@ -985,8 +985,8 @@ def ParameterFunction(parameterSet):
             varStr = ', var='+str(P.computationIndex).zfill(2)
         
         
-        batch_interval = 30000
-        batch_count = 1
+        # batch_interval = 30000
+        # batch_count = 1
         nSteps = 0
         nStepsLastEvaluation = 0
         while nSteps <= P.totalLearningSteps:
@@ -995,21 +995,23 @@ def ParameterFunction(parameterSet):
             logs = ComputeLogs(model,[])
             nSteps = logs['totalSteps']
             
-            if nSteps >= batch_interval * batch_count:
-                        batch_count += 1
-                        model.save(storeModelName + '_' + P.RLalgorithm + '_' + str(nSteps))
+            # if nSteps >= batch_interval * batch_count:
+            #             batch_count += 1
+            #             model.save(storeModelName + '_' + P.RLalgorithm + '_' + str(nSteps))
                         
             if bool(learningEnv.curicculumLearning): # check if model is empty: 
                 controlValue = testenv.SetCuricculumLearning(nSteps)
                 learningEnv.SetCuricculumLearning(nSteps)
             else: 
                 controlValue = [0] # no control
+                
             if P.verbose:
                 print('n='+str(nSteps)+varStr+', lo=', logs['lossList'][0], ', re=', logs['rewardStep'] )
             if (np.linalg.norm(controlValue) < 1e-10) and (logs['rewardStep'] > P.rewardThreshold and
                      (nSteps-nStepsLastEvaluation) >= P.evaluationSteps):
                 nStepsLastEvaluation = nSteps
                 errorList = EvaluateEnv(model, testenv, None, P)
+                
             # errorList = []    
             # if P.RLalgorithm == 'SAC' or P.RLalgorithm == 'TD3' or P.RLalgorithm == 'DDPG':
             #     if (logs['rewardStep'] > P.rewardThreshold and (nSteps-nStepsLastEvaluation) >= P.evaluationSteps):
@@ -1028,9 +1030,9 @@ def ParameterFunction(parameterSet):
                     sumError += er # sum of errors to see if model became better as last time
                 
                 if successfulTests > maxSuccessfulTests:
-                    maxSuccessfulTests = successfulTests
-                    maxSuccessfulTestsSteps = nSteps
-
+                    maxSuccessfulTests = successfulTests # we might also use this variable to check
+                    maxSuccessfulTestsSteps = nSteps # need to work with this variable most likely
+                    # can we comment it out if we don't want to save the models at all?
                     if (successfulTests >= min(4,P.numberOfTests) and P.storeBestModel != '' and sumError < P.bestTestError):
                         model.save(storeModelName + '_' + P.RLalgorithm + '_' + str(nSteps) + '_' + str(successfulTests) + '_tests')
                         if P.verbose: 

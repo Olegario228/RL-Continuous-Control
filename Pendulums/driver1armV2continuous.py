@@ -53,7 +53,7 @@ if __name__ == '__main__': #include this to enable parallel processing
 
     evaluationSteps = 1000
     episodeSteps = 1024    # SP - 1024; DP - 1229; TP = 1639
-    outputName = 'models\Curriculum-Learning\SP\PPO_base_NoCurriculum' + '_'
+    outputName = 'models\Curriculum-Learning\SP\PPO_base_CheckupVarType' + '_'
     dirName = os.path.dirname(os.path.abspath(outputName))
     
     if not os.path.exists(dirName):
@@ -103,9 +103,23 @@ if __name__ == '__main__': #include this to enable parallel processing
     else:
         print('start variation:')
         start_time = time.time()
-        nCases = 5 # repeat for statistics, parameters are unchanged
+        nCases = 2 # repeat for statistics, parameters are unchanged
+        curriculumList = [] 
+        for decaytype in ['exp', 'lin']:
+            curriculumList += [{'decayType': decaytype, # lin, quad, x^5, exp, discrete, sqrt 
+                                'decaySteps': [0, 6000, 12000], # learning steps at which to change to the next controlValues
+                                'controlValues': [
+                                                    [2,8],  # in decayStep i the i-th row of controlValues is written to the 
+                                                    [0,4],
+                                                    [0,0]
+                                                ], 
+                                'dFactor': 0.0005}]
+            print(curriculumList)
+        
+         
         [pDict, values] = ParameterVariation(parameterFunction=ParameterFunction,
                                              parameters = { 
+                                                           'curricculumLearning': curriculumList, 
                                                            #'rewardPositionFactor': [0.9, 0.8, 0.7],
                                                            #'thresholdFactor':(0.5,1.,3), #standard is 0.75
                                                            #'RLalgorithm':(0,2,3), #[0,1,2] == [A2C, PPO, DQN]
@@ -136,7 +150,7 @@ if __name__ == '__main__': #include this to enable parallel processing
     
     #%%+++++++++++++++++++++++
     #load values from file
-    if True:
+    if False:
         PlotSensorDefaults().fontSize = 10 #for changes to become active, restart iPython!
         PlotSensorDefaults().sizeInches=[6.4,4.8] #larger size gives higer resolution, but smaller font
         #for pdfs:

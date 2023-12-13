@@ -64,7 +64,7 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'evaluationSteps': evaluationSteps,
                              'episodeSteps': episodeSteps, 
                              'episodeStepsMax': int(episodeSteps*1.25), #if episodes do not finish
-                             'totalLearningSteps': int(0.035e6),  #max number of steps for total training
+                             'totalLearningSteps': int(0.035e6*0.01),  #max number of steps for total training
                              'logLevel': 3,  # 0=per step, 1=per rollout, 2=per episode, 3=per learn (higher is less logs!)
                              'lossThreshold': 1e-2,      # above that, no evaluation is performed
                              'rewardThreshold': 0.93,   # 0.95,    # above  that, no evaluation is performed (currently reward, not mean reward)
@@ -88,14 +88,14 @@ if __name__ == '__main__': #include this to enable parallel processing
                              'nThreadsTraining': 1,                       # 1 for single run; >1: vectorized envs, will also change behavior significantly
                              'resultsFile': outputName + 'Results',       # local results file
                              'verbose': True,
-                            #  'curicculumLearning': {'decayType': 'exp', # lin, quad, x^5, exp, discrete, sqrt 
-                            #                         'decaySteps': [0, 6000, 12000], # learning steps at which to change to the next controlValues
-                            #                         'controlValues': [
-                            #                                           [2,8],  # in decayStep i the i-th row of controlValues is written to the 
-                            #                                           [0,4],
-                            #                                           [0,0]
-                            #                                          ], 
-                            #                         'dFactor': 0.0005}, # in Segment i: dControl[i] = controlValues[i] * dFactor
+                             'curicculumLearning': {'decayType': 'exp', # lin, quad, x^5, exp, discrete, sqrt 
+                                                    'decaySteps': [0, 3000, 12000], # learning steps at which to change to the next controlValues
+                                                    'controlValues': [
+                                                                      [2,8],  # in decayStep i the i-th row of controlValues is written to the 
+                                                                      [0,4],
+                                                                      [0,0]
+                                                                      ], 
+                                                    'dFactor': 0.0005}, # in Segment i: dControl[i] = controlValues[i] * dFactor
                              }
 
     if False: #just evaluate and test one full learningSteps period (with graphics)
@@ -104,24 +104,20 @@ if __name__ == '__main__': #include this to enable parallel processing
         print('start variation:')
         start_time = time.time()
         nCases = 2 # repeat for statistics, parameters are unchanged
-        curriculumList = [] 
-        for decaytype in ['exp', 'lin']:
-            curriculumList += [{'decayType': decaytype, # lin, quad, x^5, exp, discrete, sqrt 
-                                'decaySteps': [0, 6000, 12000], # learning steps at which to change to the next controlValues
-                                'controlValues': [
-                                                    [2,8],  # in decayStep i the i-th row of controlValues is written to the 
-                                                    [0,4],
-                                                    [0,0]
-                                                ], 
-                                'dFactor': 0.0005}]
-            print(curriculumList)
         
          
         [pDict, values] = ParameterVariation(parameterFunction=ParameterFunction,
-                                             parameters = { 
-                                                           'curricculumLearning': curriculumList, 
-                                                           #'rewardPositionFactor': [0.9, 0.8, 0.7],
-                                                           #'thresholdFactor':(0.5,1.,3), #standard is 0.75
+                                             parameters = {
+                                                            # 'decayType': [0, 3], 
+                                                           # 'dFactor': [0.0005, 0.001, 0.0025], 
+                                                           'controlValues_00': [2], 
+                                                           'controlValues_01': (2,8,3), 
+                                                           'controlValues_10': [3], 
+                                                           'controlValues_11': [5], 
+                                                           'controlValues_20': [0], 
+                                                           'controlValues_21': [0],
+                                                            #'rewardPositionFactor': [0.9, 0.8, 0.7],
+                                                            #'thresholdFactor':(0.5,1.,3), #standard is 0.75
                                                            #'RLalgorithm':(0,2,3), #[0,1,2] == [A2C, PPO, DQN]
                                                            #'learningRateFactor':(0.5,2,5), #factor on original learning rate
                                                            #'testMassArmFact':(0.8,1.2,3),

@@ -662,7 +662,17 @@ def ParameterFunction(parameterSet):
                 print('Computation will be stopped')
                 raise ValueError('duplication of parameters')
             setattr(P,key,value)
-            # print('get functionData:', key, '=', value) #for debug
+            
+    for key,value in parameterSet.items():
+        if key == 'dFactor': 
+            P.curicculumLearning[key] = value
+        if key == 'decayType':  # translate number of decayType to the decayType itself
+            P.curicculumLearning[key] = ['lin', 'quad', 'x^5', 'exp', 'discrete', 'sqrt'][value]
+        if 'controlValues_' in key: 
+            i = int(key[-2])
+            j = int(key[-1])
+            P.curicculumLearning['controlValues'][i][j] = value
+                        # print('get functionData:', key, '=', value) #for debug
 
     if bool(P.curicculumLearning): # dict is not empty
         # if P.curicculumLearning['decaySteps'][-1] < P.totalLearningSteps: 
@@ -1075,7 +1085,7 @@ def ParameterFunction(parameterSet):
     if P.verbose: 
         print('*** learning time total =',ts+time.time(),'***')
 
-    return maxSuccessfulTests, nSteps
+    return maxSuccessfulTests, maxSuccessfulTestsSteps
 
 
 #%% 

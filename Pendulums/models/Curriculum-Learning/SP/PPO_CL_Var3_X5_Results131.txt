@@ -1,0 +1,33 @@
+#parameter variation file for learning
+#varied parameters:
+#decaySteps_0 = 0
+#decaySteps_1 = 10000.0
+#controlValues_00 = 1
+#controlValues_01 = 4.0
+#controlValues_10 = 0
+#controlValues_11 = 0
+#case = 2
+#computationIndex = 131
+#functionData = {'nArms': 1, 'evaluationSteps': 1000, 'episodeSteps': 1024, 'episodeStepsMax': 1280, 'totalLearningSteps': 25000, 'logLevel': 3, 'lossThreshold': 0.01, 'rewardThreshold': 0.93, 'meanSampleSize': 10, 'RLalgorithm': 'PPO', 'rewardMode': 2, 'rewardPositionFactor': 0.5, 'stepUpdateTime': 0.02, 'thresholdFactor': 0.5, 'cartForce': 12, 'forceFactor': 1, 'numberOfTests': 50, 'relativeFriction': 0.0, 'storeBestModel': 'models\\Curriculum-Learning\\SP\\PPO_CL_Var3_X5_Model', 'netarchLayerSize': 64, 'netarchNumberOfLayers': 2, 'stopWhenAllTestsSuccess': True, 'breakTestsWhenFailed': False, 'nThreadsTraining': 1, 'resultsFile': 'models\\Curriculum-Learning\\SP\\PPO_CL_Var3_X5_Results', 'verbose': True, 'curicculumLearning': {'decayType': 'x5', 'decaySteps': [0, 10000.0], 'controlValues': [[1, 4.0], [0, 0]], 'dFactor': 0.05, 'nStepsLastChange': 0, 'iDecay': 0}}
+#
+'totalSteps': 1280, 'rewardStep': 0.9632895519107098, 'errorList': [], 'lossList': [0.0, -1.41792535841465, 0.0, 60.19137001037598, 0.0, 0.0, 0.0], 'rewardMean': 0.9632895519107098, 'totalEpisodes': 10, 'stepsPerEpisode': 92, 'rewardPerEpisode': 76.00567614410966
+'totalSteps': 2560, 'rewardStep': 0.632413558339299, 'errorList': [], 'lossList': [0.0, -1.4222378289699555, 0.0, 26.87932010650635, 0.0, 0.0, 0.0], 'rewardMean': 0.7978515551250044, 'totalEpisodes': 16, 'stepsPerEpisode': 358, 'rewardPerEpisode': 247.80932397909328
+'totalSteps': 3840, 'rewardStep': 0.8403719173705755, 'errorList': [], 'lossList': [0.0, -1.424385358095169, 0.0, 22.464088289737703, 0.0, 0.0, 0.0], 'rewardMean': 0.8120250092068614, 'totalEpisodes': 21, 'stepsPerEpisode': 381, 'rewardPerEpisode': 255.38883153075147
+'totalSteps': 5120, 'rewardStep': 0.6893890994717324, 'errorList': [], 'lossList': [0.0, -1.4260885643959045, 0.0, 15.762246755361558, 0.0, 0.0, 0.0], 'rewardMean': 0.7813660317730792, 'totalEpisodes': 23, 'stepsPerEpisode': 72, 'rewardPerEpisode': 50.39687145942256
+'totalSteps': 6400, 'rewardStep': 0.6632424999882367, 'errorList': [], 'lossList': [0.0, -1.422606057524681, 0.0, 18.185925617814064, 0.0, 0.0, 0.0], 'rewardMean': 0.7577413254161106, 'totalEpisodes': 24, 'stepsPerEpisode': 831, 'rewardPerEpisode': 562.8152856290055
+'totalSteps': 7680, 'rewardStep': 0.6888173804802463, 'errorList': [], 'lossList': [0.0, -1.400804552435875, 0.0, 14.04221168667078, 0.0, 0.0, 0.0], 'rewardMean': 0.7462540012601333, 'totalEpisodes': 24, 'stepsPerEpisode': 1280, 'rewardPerEpisode': 1023.93440520367
+'totalSteps': 8960, 'rewardStep': 0.9661100121825607, 'errorList': [], 'lossList': [0.0, -1.3587246161699296, 0.0, 8.290516105294227, 0.0, 0.0, 0.0], 'rewardMean': 0.77766200282048, 'totalEpisodes': 24, 'stepsPerEpisode': 1280, 'rewardPerEpisode': 999.3109606297274
+'totalSteps': 10240, 'rewardStep': 0.7721705918490539, 'errorList': [], 'lossList': [0.0, -1.3320926630496979, 0.0, 4.403307722806931, 0.0, 0.0, 0.0], 'rewardMean': 0.7769755764490518, 'totalEpisodes': 24, 'stepsPerEpisode': 1280, 'rewardPerEpisode': 973.8031118656515
+'totalSteps': 11520, 'rewardStep': 0.48666924553061885, 'errorList': [], 'lossList': [0.0, -1.316117257475853, 0.0, 317.27935874938964, 0.0, 0.0, 0.0], 'rewardMean': 0.7447193174581148, 'totalEpisodes': 52, 'stepsPerEpisode': 2, 'rewardPerEpisode': 1.0176528258210649
+'totalSteps': 12800, 'rewardStep': 0.4877852635536375, 'errorList': [], 'lossList': [0.0, -1.3153005748987199, 0.0, 66.74270790100098, 0.0, 0.0, 0.0], 'rewardMean': 0.7190259120676671, 'totalEpisodes': 73, 'stepsPerEpisode': 44, 'rewardPerEpisode': 25.642570538387105
+'totalSteps': 14080, 'rewardStep': 0.40666770237180433, 'errorList': [], 'lossList': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 'rewardMean': 0.640789141517027, 'totalEpisodes': 94, 'stepsPerEpisode': 13, 'rewardPerEpisode': 6.328842750354626
+'totalSteps': 15360, 'rewardStep': 0.8491382088312123, 'errorList': [], 'lossList': [0.0, -1.3124800837039947, 0.0, 32.087638721466064, 0.0, 0.0, 0.0], 'rewardMean': 0.6416657706630907, 'totalEpisodes': 113, 'stepsPerEpisode': 56, 'rewardPerEpisode': 44.434026574287856
+'totalSteps': 16640, 'rewardStep': 0.12344852136482143, 'errorList': [], 'lossList': [0.0, -1.303844585418701, 0.0, 23.56563076734543, 0.0, 0.0, 0.0], 'rewardMean': 0.5850717128523997, 'totalEpisodes': 123, 'stepsPerEpisode': 173, 'rewardPerEpisode': 106.45368261267627
+'totalSteps': 17920, 'rewardStep': 0.40820347533319606, 'errorList': [], 'lossList': [0.0, -1.2917601364850997, 0.0, 27.661271152496337, 0.0, 0.0, 0.0], 'rewardMean': 0.5595678103868956, 'totalEpisodes': 131, 'stepsPerEpisode': 150, 'rewardPerEpisode': 105.19564949010915
+'totalSteps': 19200, 'rewardStep': 0.7261720361958361, 'errorList': [], 'lossList': [0.0, -1.2912806046009064, 0.0, 13.593916652202607, 0.0, 0.0, 0.0], 'rewardMean': 0.5633032759584546, 'totalEpisodes': 137, 'stepsPerEpisode': 432, 'rewardPerEpisode': 288.5770403090498
+'totalSteps': 20480, 'rewardStep': 0.7783522878140475, 'errorList': [], 'lossList': [0.0, -1.283388918042183, 0.0, 6.216447311639786, 0.0, 0.0, 0.0], 'rewardMean': 0.5445275035216033, 'totalEpisodes': 139, 'stepsPerEpisode': 726, 'rewardPerEpisode': 572.8313602317734
+'totalSteps': 21760, 'rewardStep': 0.6730980817424492, 'errorList': [], 'lossList': [0.0, -1.2566963565349578, 0.0, 26.081259701251984, 0.0, 0.0, 0.0], 'rewardMean': 0.5346202525109428, 'totalEpisodes': 141, 'stepsPerEpisode': 763, 'rewardPerEpisode': 513.5010463083815
+'totalSteps': 23040, 'rewardStep': 0.899373074321337, 'errorList': [], 'lossList': [0.0, -1.2425051373243332, 0.0, 6.071822580099106, 0.0, 0.0, 0.0], 'rewardMean': 0.5758906353900146, 'totalEpisodes': 141, 'stepsPerEpisode': 1280, 'rewardPerEpisode': 989.3388641758004
+'totalSteps': 24320, 'rewardStep': 0.40057078980175137, 'errorList': [], 'lossList': [0.0, -1.2288960522413255, 0.0, 2.8789401599764823, 0.0, 0.0, 0.0], 'rewardMean': 0.567169188014826, 'totalEpisodes': 141, 'stepsPerEpisode': 1280, 'rewardPerEpisode': 1022.2011883232834
+'totalSteps': 25600, 'rewardStep': 0.876240045799245, 'errorList': [], 'lossList': [0.0, -1.1948717772960662, 0.0, 2.2286084482073782, 0.0, 0.0, 0.0], 'rewardMean': 0.61412642235757, 'totalEpisodes': 141, 'stepsPerEpisode': 1280, 'rewardPerEpisode': 1083.595359800537
+#maxSuccessfulTests=0, maxSuccessfulTestsAtStep=-1, timeSpent=60.38

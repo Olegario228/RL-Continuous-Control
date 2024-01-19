@@ -1,0 +1,4 @@
+globalIndex,MaxSuccessfulTests,MaxSuccessfulTestsTimesteps,controlValues_00,controlValues_01,controlValues_10,controlValues_11,controlValues_20,controlValues_21,decaySteps_0,decaySteps_1,decaySteps_2,case,computationIndex
+941,50,12800,1,4.0,0,6.0,0,0,0,4000.0,10000.0,2,941
+9549,50,12800,4,6.0,0,6.0,0,0,0,3000.0,8000.0,5,9549
+13054,50,11520,5,10.0,0,2.0,0,0,0,6000.0,6000.0,5,13054

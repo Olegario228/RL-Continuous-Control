@@ -664,15 +664,18 @@ def ParameterFunction(parameterSet):
             setattr(P,key,value)
             
     for key,value in parameterSet.items():
-        if key == 'dFactor': 
-            P.curicculumLearning[key] = value
+        if 'decaySteps_' in key:
+            i = int(key[-1])
+            P.curicculumLearning['decaySteps'][i] = value
         if key == 'decayType':  # translate number of decayType to the decayType itself
             P.curicculumLearning[key] = ['lin', 'quad', 'x^5', 'exp', 'discrete', 'sqrt'][value]
         if 'controlValues_' in key: 
             i = int(key[-2])
             j = int(key[-1])
             P.curicculumLearning['controlValues'][i][j] = value
-                        # print('get functionData:', key, '=', value) #for debug
+            # print('get functionData:', key, '=', value) #for debug
+        if key == 'dFactor': 
+            P.curicculumLearning[key] = value
 
     if bool(P.curicculumLearning): # dict is not empty
         # if P.curicculumLearning['decaySteps'][-1] < P.totalLearningSteps: 
@@ -1043,12 +1046,12 @@ def ParameterFunction(parameterSet):
                     maxSuccessfulTests = successfulTests # we might also use this variable to check
                     maxSuccessfulTestsSteps = nSteps # need to work with this variable most likely
                     # can we comment it out if we don't want to save the models at all?
-                    if (successfulTests >= min(4,P.numberOfTests) and P.storeBestModel != '' and sumError < P.bestTestError):
-                        model.save(storeModelName + '_' + P.RLalgorithm + '_' + str(nSteps) + '_' + str(successfulTests) + '_tests')
-                        if P.verbose: 
-                            print('  saving model {} \t at step {}, err = {}'.format(storeModelName + '_' + P.RLalgorithm, nSteps, sumError))
-                    elif (successfulTests >= min(30,P.numberOfTests) and P.storeBestModel != ''):
-                        model.save(storeModelName + '_' + P.RLalgorithm + '_' + str(nSteps) + '_' + str(successfulTests) + '_tests')
+                    # if (successfulTests >= min(4,P.numberOfTests) and P.storeBestModel != '' and sumError < P.bestTestError):
+                    #     model.save(storeModelName + '_' + P.RLalgorithm + '_' + str(nSteps) + '_' + str(successfulTests) + '_tests')
+                    #     if P.verbose: 
+                    #         print('  saving model {} \t at step {}, err = {}'.format(storeModelName + '_' + P.RLalgorithm, nSteps, sumError))
+                    # elif (successfulTests >= min(30,P.numberOfTests) and P.storeBestModel != ''):
+                    #     model.save(storeModelName + '_' + P.RLalgorithm + '_' + str(nSteps) + '_' + str(successfulTests) + '_tests')
                         
                 if sumError < P.bestTestError: 
                     P.bestTestError = sumError # remember the best results for the test
@@ -1071,11 +1074,11 @@ def ParameterFunction(parameterSet):
                 print('found max number of successful tests' + varStr + ' ; stop learning')
                 break
 
-        if (maxSuccessfulTests < min(4,P.numberOfTests) and P.storeBestModel != ''):
-            if P.verbose:
-                print('*** less than 4 successful tests, storing failed model' + varStr + ' ***')
-            model.save(storeModelName + '_' + P.RLalgorithm + '_fail') #store failed model, as no best model was found
-            resultsFile.write('#less than 4 successful tests, storing failed model\n')
+        # if (maxSuccessfulTests < min(4,P.numberOfTests) and P.storeBestModel != ''):
+        #     if P.verbose:
+        #         print('*** less than 4 successful tests, storing failed model' + varStr + ' ***')
+        #     model.save(storeModelName + '_' + P.RLalgorithm + '_fail') #store failed model, as no best model was found
+        #     resultsFile.write('#less than 4 successful tests, storing failed model\n')
     
         resultsFile.write('#maxSuccessfulTests='+str(maxSuccessfulTests)
                           +', maxSuccessfulTestsAtStep='+str(maxSuccessfulTestsSteps)
